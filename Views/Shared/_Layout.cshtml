@@ -24,6 +24,18 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    
+                    @* This is to sort role for admin and users for specific views *@
+                    
+                    @if (User.IsInRole("Administator"))
+                    {
+                        <li><a href="@Url.Action("Index" , "Dashboard")">Dashboard</a></li>
+                    }
+
+                    else
+                    {
+                        <li><a href="@Url.Action("Index" , "Dashboard")">Dashboard</a></li>
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

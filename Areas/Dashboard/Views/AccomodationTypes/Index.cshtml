@@ -1,0 +1,71 @@
+﻿@model  HMS.Areas.Dashboard.ViewModels.AccomodationTypeModels
+@{
+    ViewBag.Title = "Index";
+
+}
+
+<div class="row">
+    <div class="col col-lg-12">
+        <h2>Accomodation Types</h2>
+        <hr />
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col col-lg-12">
+        @* In order to get this sent, a form is needed that will contain all the information you wish to send *@
+    
+        <form>
+            <div class="input-group">
+                <input type="text" name="searchterm" class="form-control" placeholder="Search" value="" required="">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="button"><i class="fas fa-search mr-1"></i>Search</button>
+                    <button class="btn btn-outline-secondary" type="button"><i class="fas fa-redo-alt mr-1"></i>Reset</button> 
+                    <button  data-href="@Url.Action("Action", "AccomodationTypes")" class="data-btn btn btn-outline-success" type="button" data-toggle="modal" data-target="#actionModal"><i class="fas fa-plus mr-1"></i>Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col col-lg-12">
+            @* This is to render an action in the Accomodation controller *@
+            @{
+                Html.RenderAction("Listing");
+            }
+        </div>
+    </div>
+
+
+
+<div class="modal fade" id="actionModal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog" role="document">
+       
+    </div>
+</div>
+@* This is a jquery script that when the create button is clicked *@
+<script>
+    @*$("#createButton").click(function () {
+        
+        $.ajax({
+                url: '@Url.Action("Action", "AccomodationTypes")',
+            })
+            .done(function (response) {
+                $("#actionModal .modal-dialog").html(response);
+            });
+    });*@
+
+
+    $(".data-btn").click(function () {
+        $.ajax({
+                url: $(this).attr("data-href"),
+            })
+            .done(function (response) {
+                $("#actionModal .modal-dialog").html(response);
+            });
+    });
+
+
+</script>
+
+@*id="createButton"*@

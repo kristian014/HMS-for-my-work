@@ -167,15 +167,19 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Areas\Dashboard\Controllers\AccomodationTypesController.cs" />
+    <Compile Include="Areas\Dashboard\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Dashboard\DashboardAreaRegistration.cs" />
+    <Compile Include="Areas\Dashboard\ViewModels\AccomodationTypeModels.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202005262137015_HMSDatabase.cs" />
-    <Compile Include="Migrations\202005262137015_HMSDatabase.Designer.cs">
-      <DependentUpon>202005262137015_HMSDatabase.cs</DependentUpon>
+    <Compile Include="Migrations\202005311348566_NewMigration.cs" />
+    <Compile Include="Migrations\202005311348566_NewMigration.Designer.cs">
+      <DependentUpon>202005311348566_NewMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Accomodation.cs" />
@@ -189,6 +193,21 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Dashboard\Content\css\simple-sidebar.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-grid.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-grid.min.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-reboot.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-reboot.min.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.bundle.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.bundle.min.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\jquery\jquery.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\jquery\jquery.min.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\jquery\jquery.slim.js" />
+    <Content Include="Areas\Dashboard\Content\vendor\jquery\jquery.slim.min.js" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -199,6 +218,26 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\Dashboard\Views\web.config" />
+    <Content Include="Areas\Dashboard\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Dashboard\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Dashboard\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-grid.css.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-grid.min.css.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-reboot.css.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap-reboot.min.css.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap.css.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.bundle.js.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.bundle.min.js.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.js.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\bootstrap\js\bootstrap.min.js.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\jquery\jquery.min.map" />
+    <Content Include="Areas\Dashboard\Content\vendor\jquery\jquery.slim.min.map" />
+    <Content Include="Areas\Dashboard\Views\AccomodationTypes\_Listing.cshtml" />
+    <Content Include="Areas\Dashboard\Views\AccomodationTypes\Index.cshtml" />
+    <Content Include="Areas\Dashboard\Views\AccomodationTypes\_Action.cshtml" />
+    <Content Include="Areas\Dashboard\Views\AccomodationTypes\_Delete.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -247,6 +286,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Dashboard\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -262,8 +302,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202005262137015_HMSDatabase.resx">
-      <DependentUpon>202005262137015_HMSDatabase.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202005311348566_NewMigration.resx">
+      <DependentUpon>202005311348566_NewMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
