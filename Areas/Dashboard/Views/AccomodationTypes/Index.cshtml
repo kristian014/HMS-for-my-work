@@ -16,9 +16,9 @@
     
         <form>
             <div class="input-group">
-                <input type="text" name="searchterm" class="form-control" placeholder="Search" value="" required="">
+                <input type="text" name="searchterm" class="form-control" placeholder="Search" value="@Model.SearchTerm" required="">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="button"><i class="fas fa-search mr-1"></i>Search</button>
+                    <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search mr-1"></i>Search</button>
                     <button class="btn btn-outline-secondary" type="button"><i class="fas fa-redo-alt mr-1"></i>Reset</button> 
                     <button  data-href="@Url.Action("Action", "AccomodationTypes")" class="data-btn btn btn-outline-success" type="button" data-toggle="modal" data-target="#actionModal"><i class="fas fa-plus mr-1"></i>Create</button>
                 </div>
@@ -31,7 +31,7 @@
         <div class="col col-lg-12">
             @* This is to render an action in the Accomodation controller *@
             @{
-                Html.RenderAction("Listing");
+                Html.RenderPartial("_Listing" , Model);
             }
         </div>
     </div>

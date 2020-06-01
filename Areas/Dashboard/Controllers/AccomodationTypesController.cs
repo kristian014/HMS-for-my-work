@@ -12,9 +12,14 @@ namespace HMS.Areas.Dashboard.Controllers
     {
         private ApplicationDbContext context = new ApplicationDbContext();
         // GET: Dashboard/AccomodationType
-        public ActionResult Index()
+        public ActionResult Index(string searchTerm)
         {
-            return View();
+            AccomodationTypeActionModel model2 = new AccomodationTypeActionModel();
+            AccomodationTypeModels model = new AccomodationTypeModels();
+            model.SearchTerm = searchTerm;
+            model.accomodationTypes = model2.SearchAccomodationTypes(searchTerm);
+            
+            return View(model);
         }
 
         /// <summary>
@@ -22,13 +27,13 @@ namespace HMS.Areas.Dashboard.Controllers
         ///  to acheive this I created a method to get all infomation using Iemermarable list. 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Listing()
-        {
-            // I created an object model that we can use to access the accomodationtypemodel class 
-            AccomodationTypeModels  model = new AccomodationTypeModels();
-            model.accomodationTypes = GetAccomodationTypes();
-            return PartialView("_Listing", model);
-        }
+        //public ActionResult Listing()
+        //{
+        //    // I created an object model that we can use to access the accomodationtypemodel class 
+        //    AccomodationTypeModels  model = new AccomodationTypeModels();
+        //    model.accomodationTypes = GetAccomodationTypes();
+        //    return PartialView("_Listing", model);
+        //}
 
     /// <summary>
     /// This Action method handles the Create and edit using HTTPGet to get information and uses Httppost to post information and saves it into the database

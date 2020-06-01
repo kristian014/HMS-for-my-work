@@ -56,7 +56,28 @@ namespace HMS.Areas.Dashboard.ViewModels
             context.Entry(accomodationType).State = System.Data.Entity.EntityState.Deleted;
             return context.SaveChanges() > 0;
         }
+
+        public IEnumerable<AccomodationType> SearchAccomodationTypes(string searchTerm)
+        {
+          
+
+            var accomodationTypes = context.AccomodationTypes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                accomodationTypes = accomodationTypes.Where(a => a.Name.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            return accomodationTypes.ToList();
+        }
+
+        public IEnumerable<AccomodationType> GetAllAccomodationTypes()
+        {
+            return context.AccomodationTypes.ToList();
+        }
+
+
     }
 
-   
+
 }
