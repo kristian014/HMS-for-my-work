@@ -2,123 +2,260 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using HMS.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace HMS.Areas.Dashboard.Controllers
 {
     public class UsersController : Controller
     {
         // GET: Dashboard/Users
-        public ActionResult Index(string searchTerm, int? accomodationPackageID, int? page)
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+
+        public UsersController()
         {
+        }
+
+        public UsersController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
 
-            int recordSize = 3;
+        public async Task<ActionResult> Index(string searchTerm, string roleID, int? page)
+        {
+            int recordSize = 10;
             page = page ?? 1;
-            AccomodationActionModel model3 = new AccomodationActionModel();
-            AccomodationPackageActionModel model2 = new AccomodationPackageActionModel();
-            AccomodationsViewModel model = new AccomodationsViewModel();
+
+            UserViewModel model = new UserViewModel();
 
             model.SearchTerm = searchTerm;
-            model.AccomodationPackageID = accomodationPackageID;
-            model.AccomodationPackages = model2.GetAllAccomodationPackages();
-            model.Accomodations = model3.SearchAccomodations(searchTerm, accomodationPackageID, page.Value, recordSize);
-            var totalRecords = model3.SearchAccomodationsCount(searchTerm, accomodationPackageID);
+            model.RoleID = roleID;
+           // model.Roles = RoleManager.Roles.ToList();
+
+            model.Users = await SearchUsers(searchTerm, roleID, page.Value, recordSize);
+
+            var totalRecords = await SearchUsersCount(searchTerm, roleID);
+
             model.Pager = new Pager(totalRecords, page, recordSize);
 
             return View(model);
+        }
 
+        public async Task<IEnumerable<ApplicationUser>> SearchUsers(string searchTerm, string roleID, int page, int recordSize)
+        {
+            var users = UserManager.Users.AsQueryable();
 
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(roleID))
+            {
+               // var role = await RoleManager.FindByIdAsync(roleID);
+
+                //var userIDs = role.Users.Select(x => x.UserId).ToList();
+
+                //users = users.Where(x => userIDs.Contains(x.Id));
+            }
+
+            var skip = (page - 1) * recordSize;
+
+            return users.OrderBy(x => x.Email).Skip(skip).Take(recordSize).ToList();
+        }
+
+        public async Task<int> SearchUsersCount(string searchTerm, string roleID)
+        {
+            var users = UserManager.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                users = users.Where(a => a.Email.ToLower().Contains(searchTerm.ToLower()));
+            }
+
+            if (!string.IsNullOrEmpty(roleID))
+            {
+               // var role = await RoleManager.FindByIdAsync(roleID);
+
+                //var userIDs = role.Users.Select(x => x.UserId).ToList();
+
+                //users = users.Where(x => userIDs.Contains(x.Id));
+            }
+
+            return users.Count();
         }
 
         [HttpGet]
-        public ActionResult Action(int? ID)
+        public async Task<ActionResult> Action(string ID)
         {
-            AccomodationActionModel model = new AccomodationActionModel();
-            AccomodationPackageActionModel model2 = new AccomodationPackageActionModel();
+            UserActionModel model = new UserActionModel();
 
-            if (ID.HasValue)
+            if (!string.IsNullOrEmpty(ID)) //we are trying to edit a record
             {
-                var accomodation = model.GetAccomodationByID(ID.Value);
-                model.ID = accomodation.ID;
-                model.AccomodationPackageID = accomodation.AccomodationPackageID;
-                model.Name = accomodation.Name;
-                model.Description = accomodation.Description;
+                var user = await UserManager.FindByIdAsync(ID);
+
+                model.ID = user.Id;
+                model.FullName = user.FullName;
+                model.Email = user.Email;
+                model.Username = user.UserName;
+                model.Country = user.Country;
+                model.City = user.City;
+                model.Address = user.Address;
             }
 
-            model.AccomodationPackages = model2.GetAllAccomodationPackages();
             return PartialView("_Action", model);
         }
 
         [HttpPost]
-        public JsonResult Action(AccomodationActionModel model)
+        public async Task<JsonResult> Action(UserActionModel model)
         {
             JsonResult json = new JsonResult();
-            var result = false;
-            if (model.ID > 0) // we are trying to edit
+
+            IdentityResult result = null;
+
+            if (!string.IsNullOrEmpty(model.ID)) //we are trying to edit a record
             {
-                var accomodation = model.GetAccomodationByID(model.ID);
-                accomodation.AccomodationPackageID = model.AccomodationPackageID;
-                accomodation.Name = model.Name;
-                accomodation.Description = model.Description;
-                result = model.UpdateAccomodation(accomodation);
+                var user = await UserManager.FindByIdAsync(model.ID);
+
+                user.FullName = model.FullName;
+                user.Email = model.Email;
+                user.UserName = model.Username;
+                user.Country = model.Country;
+                user.City = model.City;
+                user.Address = model.Address;
+
+                result = await UserManager.UpdateAsync(user);
             }
-            else
+            else //we are trying to create a record
             {
-                Accomodation accomodation = new Accomodation();
-                accomodation.AccomodationPackageID = model.AccomodationPackageID;
-                accomodation.Name = model.Name;
-                accomodation.Description = model.Description;
-                result = model.SaveAccomodation(accomodation);
+                var user = new ApplicationUser();
+
+                user.City = model.FullName;
+                user.Email = model.Email;
+                user.UserName = model.Username;
+                user.Country = model.Country;
+                user.City = model.City;
+                user.Address = model.Address;
+
+                result = await UserManager.CreateAsync(user);
             }
 
-            if (result)
-            {
-                json.Data = new { Success = true };
-            }
-            else
-            {
-                json.Data = new { Success = false, Message = "Unable to perform action on Accomodation." };
-            }
+            json.Data = new { Success = result.Succeeded, Message = string.Join(", ", result.Errors) };
 
             return json;
         }
 
         [HttpGet]
-        public ActionResult Delete(int ID)
+        public async Task<ActionResult> Delete(string ID)
         {
-            AccomodationActionModel model = new AccomodationActionModel();
+            UserActionModel model = new UserActionModel();
 
-            var accomodation = model.GetAccomodationByID(ID);
+            var user = await UserManager.FindByIdAsync(ID);
 
-            model.ID = accomodation.ID;
+            model.ID = user.Id;
 
             return PartialView("_Delete", model);
         }
 
         [HttpPost]
-        public JsonResult Delete(AccomodationActionModel model)
+        public async Task<JsonResult> Delete(UserActionModel model)
         {
             JsonResult json = new JsonResult();
 
-            var result = false;
+            IdentityResult result = null;
 
-            var accomodation = model.GetAccomodationByID(model.ID);
-
-            result = model.DeleteAccomodation(accomodation);
-
-            if (result)
+            if (!string.IsNullOrEmpty(model.ID)) //we are trying to delete a record
             {
-                json.Data = new { Success = true };
+                var user = await UserManager.FindByIdAsync(model.ID);
+
+                result = await UserManager.DeleteAsync(user);
+
+                json.Data = new { Success = result.Succeeded, Message = string.Join(", ", result.Errors) };
             }
             else
             {
-                json.Data = new { Success = false, Message = "Unable to perform action on Accomodation." };
+                json.Data = new { Success = false, Message = "Invalid user." };
             }
 
             return json;
         }
+
+        //[HttpGet]
+        //public async Task<ActionResult> UserRoles(string ID)
+        //{
+        //    UserRolesModel model = new UserRolesModel();
+
+        //    model.UserID = ID;
+        //    var user = await UserManager.FindByIdAsync(ID);
+        //    var userRoleIDs = user.Roles.Select(x => x.RoleId).ToList();
+
+        //    model.UserRoles = RoleManager.Roles.Where(x => userRoleIDs.Contains(x.Id)).ToList();
+        //    model.Roles = RoleManager.Roles.Where(x => !userRoleIDs.Contains(x.Id)).ToList();
+
+        //    return PartialView("_UserRoles", model);
+        //}
+
+        //[HttpPost]
+        //public async Task<JsonResult> UserRoleOperation(string userID, string roleID, bool isDelete = false)
+        //{
+        //    JsonResult json = new JsonResult();
+
+        //    var user = await UserManager.FindByIdAsync(userID);
+
+        //    var role = await RoleManager.FindByIdAsync(roleID);
+
+        //    if (user != null && role != null)
+        //    {
+        //        IdentityResult result = null;
+
+        //        if (!isDelete)
+        //        {
+        //            result = await UserManager.AddToRoleAsync(userID, role.Name);
+        //        }
+        //        else
+        //        {
+        //            result = await UserManager.RemoveFromRoleAsync(userID, role.Name);
+        //        }
+
+        //        json.Data = new { Success = result.Succeeded, Message = string.Join(",", result.Errors) };
+        //    }
+        //    else
+        //    {
+        //        json.Data = new { Success = false, Message = "Invalid operation." };
+        //    }
+
+        //    return json;
+        //}
     }
 }

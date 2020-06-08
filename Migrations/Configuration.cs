@@ -9,7 +9,7 @@ namespace HMS.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(HMS.Models.ApplicationDbContext context)

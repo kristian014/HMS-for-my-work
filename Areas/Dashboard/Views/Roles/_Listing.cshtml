@@ -1,14 +1,14 @@
-﻿@model HMS.Areas.Dashboard.ViewModels.UserViewModel
+﻿
+@model HMS.Areas.Dashboard.ViewModels.UsersViewModel
 
 @if (Model != null && Model.Users != null && Model.Users.Count() > 0)
 {
     <table class="table table-striped">
         <thead>
             <tr>
-                @*<th scope="col">Full Name</th>*@
                 <th scope="col">Email</th>
                 <th scope="col">Username</th>
-                <th scope="col">Roles</th>
+                <th scope="col">Role</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -17,9 +17,6 @@
             @foreach (var user in Model.Users)
             {
                 <tr>
-                    @*<td>
-                        @user.FullName
-                    </td>*@
                     <td>
                         @user.Email
                     </td>
@@ -27,12 +24,16 @@
                         @user.UserName
                     </td>
                     <td>
-                        @user.Roles.Count
+                        @*@if (accomodation.AccomodationPackage != null)
+                        {
+                            @accomodation.AccomodationPackage.Name
+                        }*@
+                        
+                        -
                     </td>
                     <td>
                         <button data-href="@Url.Action("Action", "Users", new { ID = user.Id })" type="button" class="data-btn btn btn-primary" data-toggle="modal" data-target="#actionModal"><i class="fas fa-pen mr-1"></i> Edit</button>
                         <button data-href="@Url.Action("Delete", "Users", new { ID = user.Id })" type="button" class="data-btn btn btn-danger" data-toggle="modal" data-target="#actionModal"><i class="fas fa-trash-alt mr-1"></i> Delete</button>
-                        <button data-href="@Url.Action("UserRoles", "Users", new { ID = user.Id })" type="button" class="data-btn btn btn-info" data-toggle="modal" data-target="#actionModal"><i class="fas fa-user-shield mr-1"></i> Roles</button>
                     </td>
                 </tr>
             }
@@ -46,12 +47,12 @@
                 @if (Model.Pager.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = 1, searchTerm = Model.SearchTerm, RoleID = Model.RoleID })">
+                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = 1, searchTerm = Model.SearchTerm, accomodationPackageID = Model.RoleID }))">
                             <i class="fas fa-angle-double-left"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = Model.Pager.CurrentPage - 1, searchTerm = Model.SearchTerm, RoleID = Model.RoleID })">
+                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = Model.Pager.CurrentPage - 1, searchTerm = Model.SearchTerm, accomodationPackageID = Model.RoleID })">
                             <i class="fas fa-angle-left"></i>
                         </a>
                     </li>
@@ -60,19 +61,19 @@
                 @for (var page = Model.Pager.StartPage; page <= Model.Pager.EndPage; page++)
                 {
                     <li class="page-item @(page == Model.Pager.CurrentPage ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = page, searchTerm = Model.SearchTerm, RoleID = Model.RoleID })">@page</a>
+                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = page, searchTerm = Model.SearchTerm, accomodationPackageID = Model.RoleID })">@page</a>
                     </li>
                 }
 
                 @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = Model.Pager.CurrentPage + 1, searchTerm = Model.SearchTerm, RoleID = Model.RoleID })">
+                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = Model.Pager.CurrentPage + 1, searchTerm = Model.SearchTerm, accomodationPackageID = Model.RoleID })">
                             <i class="fas fa-angle-right"></i>
                         </a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = Model.Pager.TotalPages, searchTerm = Model.SearchTerm, RoleID = Model.RoleID })">
+                        <a class="page-link" href="@Url.Action("Index", "Users", new { page = Model.Pager.TotalPages, searchTerm = Model.SearchTerm, accomodationPackageID = Model.RoleID })">
                             <i class="fas fa-angle-double-right"></i>
                         </a>
                     </li>

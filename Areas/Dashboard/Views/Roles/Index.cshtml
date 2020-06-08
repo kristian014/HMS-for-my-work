@@ -1,8 +1,8 @@
-﻿@model HMS.Areas.Dashboard.ViewModels.UserViewModel
+﻿@model HMS.Areas.Dashboard.ViewModels.UsersViewModel
 
 <div class="row">
     <div class="col col-lg-12">
-        <h2>Users (@Model.Pager.TotalItems)</h2>
+        <h2>Users</h2>
         <hr />
     </div>
 </div>
@@ -22,7 +22,7 @@
                         @foreach (var role in Model.Roles)
                         {
                             <option value="@role.Id" @(role.Id == Model.RoleID ? "selected" : string.Empty)>
-                                @role.Name
+                               @role.Name
                             </option>
                         }
                     </select>
