@@ -105,5 +105,12 @@ namespace HMS.Areas.Dashboard.ViewModels
 
         }
 
+        public IEnumerable<AccomodationPackage> GetAllAccomodationPackages()
+        {
+
+            return context.AccomodationPackages.ToList();
+        }
+
+
     }
 }
