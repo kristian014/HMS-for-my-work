@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 using HMS.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -94,11 +95,14 @@ namespace HMS.Areas.Dashboard.Controllers
 
             if (!string.IsNullOrEmpty(roleID))
             {
-               // var role = await RoleManager.FindByIdAsync(roleID);
+               
 
-                //var userIDs = role.Users.Select(x => x.UserId).ToList();
+                 var role = await RoleManager.FindByIdAsync(roleID);
 
-                //users = users.Where(x => userIDs.Contains(x.Id));
+                var userIDs = role.Users.Select(x => x.UserId).ToList();
+                users = users.Where(x => userIDs.Contains(x.Id));
+
+                // users = users.Where(x => x.Roles.Select(y => y.RoleId).Contains(roleID));
             }
 
             var skip = (page - 1) * recordSize;
@@ -117,11 +121,12 @@ namespace HMS.Areas.Dashboard.Controllers
 
             if (!string.IsNullOrEmpty(roleID))
             {
-               // var role = await RoleManager.FindByIdAsync(roleID);
+                var role = await RoleManager.FindByIdAsync(roleID);
 
-                //var userIDs = role.Users.Select(x => x.UserId).ToList();
+                var userIDs = role.Users.Select(x => x.UserId).ToList();
 
-                //users = users.Where(x => userIDs.Contains(x.Id));
+                users = users.Where(x => userIDs.Contains(x.Id));
+                //  users = users.Where(x => x.Roles.Select(y => y.RoleId).Contains(roleID));
             }
 
             return users.Count();
@@ -237,6 +242,38 @@ namespace HMS.Areas.Dashboard.Controllers
             return PartialView("_UserRoles", model);
         }
 
+        [HttpPost]
+        public async Task<JsonResult> AssignUserRole(string userID, string roleID)
+        {
+            JsonResult json = new JsonResult();
+            var users = await UserManager.FindByIdAsync(userID);
+            var role = await RoleManager.FindByIdAsync(roleID);
+
+            if (users != null && role != null)
+            {
+                //if (Operation.Equals("Assign"))
+                //{
+
+                //}
+
+                var result = await UserManager.AddToRoleAsync(userID, role.Name);
+                json.Data = new { Success = result.Succeeded, Message = string.Join(", ", result.Errors) };
+            }
+
+            else
+            {
+                json.Data = new { Success = false, Message = " Invalid Operations" };
+            }
+            return json;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="roleID"></param>
+        /// <param name="isDelete"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<JsonResult> UserRoleOperation(string userID, string roleID, bool isDelete = false)
         {
