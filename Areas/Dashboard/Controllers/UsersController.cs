@@ -16,15 +16,16 @@ namespace HMS.Areas.Dashboard.Controllers
         // GET: Dashboard/Users
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private ApplicationRoleManager _roleManager;
         public UsersController()
         {
         }
 
-        public UsersController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public UsersController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleManager = roleManager;
         }
 
         public ApplicationSignInManager SignInManager
@@ -50,7 +51,17 @@ namespace HMS.Areas.Dashboard.Controllers
                 _userManager = value;
             }
         }
-
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
+            }
+        }
 
         public async Task<ActionResult> Index(string searchTerm, string roleID, int? page)
         {
@@ -61,7 +72,7 @@ namespace HMS.Areas.Dashboard.Controllers
 
             model.SearchTerm = searchTerm;
             model.RoleID = roleID;
-           // model.Roles = RoleManager.Roles.ToList();
+            model.Roles = RoleManager.Roles.ToList();
 
             model.Users = await SearchUsers(searchTerm, roleID, page.Value, recordSize);
 
@@ -211,51 +222,51 @@ namespace HMS.Areas.Dashboard.Controllers
             return json;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult> UserRoles(string ID)
-        //{
-        //    UserRolesModel model = new UserRolesModel();
+        [HttpGet]
+        public async Task<ActionResult> UserRoles(string ID)
+        {
+            UserRolesModel model = new UserRolesModel();
 
-        //    model.UserID = ID;
-        //    var user = await UserManager.FindByIdAsync(ID);
-        //    var userRoleIDs = user.Roles.Select(x => x.RoleId).ToList();
+            model.UserID = ID;
+            var user = await UserManager.FindByIdAsync(ID);
+            var userRoleIDs = user.Roles.Select(x => x.RoleId).ToList();
 
-        //    model.UserRoles = RoleManager.Roles.Where(x => userRoleIDs.Contains(x.Id)).ToList();
-        //    model.Roles = RoleManager.Roles.Where(x => !userRoleIDs.Contains(x.Id)).ToList();
+            model.UserRoles = RoleManager.Roles.Where(x => userRoleIDs.Contains(x.Id)).ToList();
+            model.Roles = RoleManager.Roles.Where(x => !userRoleIDs.Contains(x.Id)).ToList();
 
-        //    return PartialView("_UserRoles", model);
-        //}
+            return PartialView("_UserRoles", model);
+        }
 
-        //[HttpPost]
-        //public async Task<JsonResult> UserRoleOperation(string userID, string roleID, bool isDelete = false)
-        //{
-        //    JsonResult json = new JsonResult();
+        [HttpPost]
+        public async Task<JsonResult> UserRoleOperation(string userID, string roleID, bool isDelete = false)
+        {
+            JsonResult json = new JsonResult();
 
-        //    var user = await UserManager.FindByIdAsync(userID);
+            var user = await UserManager.FindByIdAsync(userID);
 
-        //    var role = await RoleManager.FindByIdAsync(roleID);
+            var role = await RoleManager.FindByIdAsync(roleID);
 
-        //    if (user != null && role != null)
-        //    {
-        //        IdentityResult result = null;
+            if (user != null && role != null)
+            {
+                IdentityResult result = null;
 
-        //        if (!isDelete)
-        //        {
-        //            result = await UserManager.AddToRoleAsync(userID, role.Name);
-        //        }
-        //        else
-        //        {
-        //            result = await UserManager.RemoveFromRoleAsync(userID, role.Name);
-        //        }
+                if (!isDelete)
+                {
+                    result = await UserManager.AddToRoleAsync(userID, role.Name);
+                }
+                else
+                {
+                    result = await UserManager.RemoveFromRoleAsync(userID, role.Name);
+                }
 
-        //        json.Data = new { Success = result.Succeeded, Message = string.Join(",", result.Errors) };
-        //    }
-        //    else
-        //    {
-        //        json.Data = new { Success = false, Message = "Invalid operation." };
-        //    }
+                json.Data = new { Success = result.Succeeded, Message = string.Join(",", result.Errors) };
+            }
+            else
+            {
+                json.Data = new { Success = false, Message = "Invalid operation." };
+            }
 
-        //    return json;
-        //}
+            return json;
+        }
     }
 }
